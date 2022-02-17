@@ -35,8 +35,8 @@ class L0Activation(Module):
 
         self.prior_prec = weight_decay
 
-        self.activations = Parameter(torch.Tensor(in_features)) # was weights
-        self.qz_loga = Parameter(torch.Tensor(in_features))
+        self.activations = torch.Tensor(in_features) # was weights
+        self.qz_loga = torch.Tensor(in_features)
         
         self.temperature = temperature
         self.droprate_init = droprate_init if droprate_init != 0. else 0.5
@@ -51,12 +51,13 @@ class L0Activation(Module):
         print(self)
 
     def reset_parameters(self):
-        init.normal_(self.activations)
+        init.normal(self.activations)
 
-        self.qz_loga.data.normal_(math.log(1 - self.droprate_init) - math.log(self.droprate_init), 1e-2)
+        init.normal(self.qz_loga, math.log(1 - self.droprate_init) - math.log(self.droprate_init), 1e-2)
 
         if self.use_bias:
             self.bias.data.fill_(0)
+
 
     def constrain_parameters(self, **kwargs):
         self.qz_loga.data.clamp_(min=math.log(1e-2), max=math.log(1e2))
@@ -65,11 +66,11 @@ class L0Activation(Module):
         """Implements the CDF of the 'stretched' concrete distribution"""
         xn = (x - limit_a) / (limit_b - limit_a)
         logits = math.log(xn) - math.log(1 - xn)
-        return F.sigmoid(logits * self.temperature - self.qz_loga).clamp(min=epsilon, max=1 - epsilon)
+        return sigmoid(logits * self.temperature - self.qz_loga).clamp(min=epsilon, max=1 - epsilon)
 
     def quantile_concrete(self, x):
         """Implements the quantile, aka inverse CDF, of the 'stretched' concrete distribution"""
-        y = F.sigmoid((torch.log(x) - torch.log(1 - x) + self.qz_loga) / self.temperature)
+        y = sigmoid((torch.log(x) - torch.log(1 - x) + self.qz_loga) / self.temperature)
         return y * (limit_b - limit_a) + limit_a
 
     def _reg_w(self):
@@ -108,39 +109,23 @@ class L0Activation(Module):
             z = self.quantile_concrete(eps)
             return F.hardtanh(z, min_val=0, max_val=1)
         else:  # mode
-            pi = F.sigmoid(self.qz_loga)#.view(1, self.in_features).expand(batch_size, self.in_features)
+            pi = sigmoid(self.qz_loga)#.view(1, self.in_features).expand(batch_size, self.in_features)
             return F.hardtanh(pi * (limit_b - limit_a) + limit_a, min_val=0, max_val=1)
 
     def sample_weights(self):
         # same as sample_z as have no weights
         return self.sample_z(sample=True)
 
-        # z = self.quantile_concrete(self.get_eps(self.floatTensor(self.in_features)))
-        # mask = F.hardtanh(z, min_val=0, max_val=1)
-        # return mask.view(self.in_features, 1) * self.weights
-
-    # def forward(self, input):
-    #     if self.local_rep or not self.training:
-    #         z = self.sample_z(input.size(0), sample=self.training)
-    #         xin = input.mul(z)
-    #         output = xin.mm(self.weights)
-    #     else:
-    #         weights = self.sample_weights()
-    #         output = input.mm(weights)
-    #     if self.use_bias:
-    #         output.add_(self.bias)
-    #     return output
-
 
     def forward(self, input_activations=None, input_qz_loga=None, shape=None):
 
         if input_activations is not None:
             # in case need to pass activations as parameter (eg when using torchmin)
-            self.activations = Parameter(input_activations)
+            self.activations = input_activations
 
         if input_qz_loga is not None:   
             # in case need to pass activations as parameter (eg when using torchmin)
-            self.input_qz_loga = Parameter(input_qz_loga)
+            self.qz_loga = input_qz_loga
 
         output_activations = self.sample_z(sample=self.training) * self.activations
 
