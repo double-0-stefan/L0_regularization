@@ -132,7 +132,7 @@ class L0Activation(Module):
     #     return output
 
 
-    def forward(self, input_activations=None, input_qz_loga=None shape=None):
+    def forward(self, input_activations=None, input_qz_loga=None, shape=None):
 
         if input_activations is not None:
             # in case need to pass activations as parameter (eg when using torchmin)
