@@ -28,7 +28,7 @@ class L0Activation(Module):
         super(L0Activation, self).__init__()
 
         if len(in_features) > 1:
-            in_features = math.prod(in_features)
+            in_features = in_features[0]*in_features[1]*in_features[2]*in_features[3]
 
         self.in_features = in_features
         self.out_features = out_features
@@ -192,7 +192,7 @@ class L0Dense(Module):
         print(self)
 
     def reset_parameters(self):
-        init.kaiming_normal(self.weights, mode='fan_out')
+        init.normal_(self.weights, mode='fan_out')
 
         self.qz_loga.data.normal_(math.log(1 - self.droprate_init) - math.log(self.droprate_init), 1e-2)
 
