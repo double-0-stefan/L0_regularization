@@ -130,7 +130,11 @@ class L0Activation(Module):
     #     return output
 
 
-    def forward(self, shape=None):
+    def forward(self, activations=None, shape=None):
+
+        if activations is not None:
+            # in case need to pass activations as parameter (eg when using torchmin)
+            self.activations = activations
 
         activations = self.sample_z(sample=self.training) * self.activations
 
