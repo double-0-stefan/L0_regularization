@@ -1,6 +1,7 @@
 import torch
 import math
 import torch.nn.functional as F
+from torch import sigmoid
 from torch.nn.modules import Module
 from torch.nn.parameter import Parameter
 from torch.nn.modules.utils import _pair as pair
