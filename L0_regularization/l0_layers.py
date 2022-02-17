@@ -49,7 +49,7 @@ class L0Activation(Module):
         print(self)
 
     def reset_parameters(self):
-        init.kaiming_normal(self.activations, mode='fan_out')
+        init.normal_(self.activations)
 
         self.qz_loga.data.normal_(math.log(1 - self.droprate_init) - math.log(self.droprate_init), 1e-2)
 
