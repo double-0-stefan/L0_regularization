@@ -27,8 +27,8 @@ class L0Activation(Module):
         """
         super(L0Activation, self).__init__()
 
-        if len(in_features) > 1:
-            in_features = in_features[0]*in_features[1]*in_features[2]*in_features[3]
+        # if len(in_features) > 1:
+        #     in_features = in_features[0]*in_features[1]*in_features[2]*in_features[3]
 
         self.in_features = in_features
         self.out_features = out_features
