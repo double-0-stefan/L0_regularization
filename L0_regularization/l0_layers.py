@@ -34,8 +34,10 @@ class L0Activation(Module):
         self.out_features = out_features
 
         self.prior_prec = weight_decay
+
         self.activations = Parameter(torch.Tensor(in_features)) # was weights
         self.qz_loga = Parameter(torch.Tensor(in_features))
+        
         self.temperature = temperature
         self.droprate_init = droprate_init if droprate_init != 0. else 0.5
         self.lamba = lamba
@@ -130,11 +132,15 @@ class L0Activation(Module):
     #     return output
 
 
-    def forward(self, input_activations=None, shape=None):
+    def forward(self, input_activations=None, input_qz_loga=None shape=None):
 
         if input_activations is not None:
             # in case need to pass activations as parameter (eg when using torchmin)
             self.activations = Parameter(input_activations)
+
+        if input_qz_loga is not None:   
+            # in case need to pass activations as parameter (eg when using torchmin)
+            self.input_qz_loga = Parameter(input_qz_loga)
 
         output_activations = self.sample_z(sample=self.training) * self.activations
 
