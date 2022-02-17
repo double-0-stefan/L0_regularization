@@ -35,8 +35,8 @@ class L0Activation(Module):
 
         self.prior_prec = weight_decay
 
-        self.activations = torch.Tensor(in_features) # was weights
-        self.qz_loga = torch.Tensor(in_features)
+        self.activations = torch.Tensor(in_features).cuda() # was weights
+        self.qz_loga = torch.Tensor(in_features).cuda()
         
         self.temperature = temperature
         self.droprate_init = droprate_init if droprate_init != 0. else 0.5
