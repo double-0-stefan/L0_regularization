@@ -52,9 +52,9 @@ class L0Activation(Module):
         print(self)
 
     def reset_parameters(self):
-        init.normal(self.activations)
+        init.normal_(self.activations)
 
-        init.normal(self.qz_loga, math.log(1 - self.droprate_init) - math.log(self.droprate_init), 1e-2)
+        init.normal_(self.qz_loga, math.log(1 - self.droprate_init) - math.log(self.droprate_init), 1e-2)
 
         if self.use_bias:
             self.bias.data.fill_(0)
