@@ -76,7 +76,9 @@ class L0Activation(Module):
 
     def _reg_w(self):
         """Expected L0 norm under the stochastic gates, takes into account and re-weights also a potential L2 penalty"""
-        logpw_col = torch.sum(- (.5 * self.prior_prec * self.activations.pow(2)) - self.lamba, 1)
+        # logpw_col = torch.sum(- (.5 * self.prior_prec * self.activations.pow(2)) - self.lamba, 1)
+        # don't want to be summing over any dimension, cf linear or conv layer version
+        logpw_col = - (.5 * self.prior_prec * self.activations.pow(2)) - self.lamba
         logpw = torch.sum((1 - self.cdf_qz(0)) * logpw_col)
         logpb = 0 if not self.use_bias else - torch.sum(.5 * self.prior_prec * self.bias.pow(2))
         return logpw + logpb
