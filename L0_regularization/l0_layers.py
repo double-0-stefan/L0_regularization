@@ -81,6 +81,7 @@ class L0Activation(Module):
         logpw_col = - (.5 * self.prior_prec * self.activations.pow(2)) - self.lamba
         logpw = torch.sum((1 - self.cdf_qz(0)) * logpw_col)
         logpb = 0 if not self.use_bias else - torch.sum(.5 * self.prior_prec * self.bias.pow(2))
+        print(logpw)
         return logpw + logpb
 
     def regularization(self):
