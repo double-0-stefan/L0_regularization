@@ -83,7 +83,12 @@ class L0Activation(Module):
         # print(logpw.shape)
         # logic behind max: slower to converge but don't get beggar-thy-neighbour effect
         #uses min because these all negative!!!
-        logpw = torch.amin(logpw, dim=[0,1,-1])
+
+        # logpw = torch.amin(logpw, dim=[0,1,-1])
+        # 'soft' version:
+        m = logpw.mean()
+        logpw = logpw[logpw <= m].sum()
+
         # logpw = logpw.max()
 
         logpb = 0 if not self.use_bias else - torch.sum(.5 * self.prior_prec * self.bias.pow(2))
