@@ -79,10 +79,9 @@ class L0Activation(Module):
         # logpw_col = torch.sum(- (.5 * self.prior_prec * self.activations.pow(2)) - self.lamba, 1)
         # don't want to be summing over any dimension, cf linear or conv layer version
         logpw_col = - (.5 * self.prior_prec * self.activations.pow(2)) - self.lamba
-        logpw = ((1 - self.cdf_qz(0)) * logpw_col).sum(1)
+        logpw = ((1 - self.cdf_qz(0)) * logpw_col).max(1)
 
-        # logpw = logpw.sum()
-        logpw = logpw.max()
+        logpw = logpw.sum()   
 
         logpb = 0 if not self.use_bias else - torch.sum(.5 * self.prior_prec * self.bias.pow(2))
         # print(logpw)  
