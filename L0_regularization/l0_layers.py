@@ -74,14 +74,14 @@ class L0Activation(Module):
         y = sigmoid((torch.log(x) - torch.log(1 - x) + self.qz_loga) / self.temperature)
         return y * (limit_b - limit_a) + limit_a
 
-    def _reg_w(self):
+    def _reg_w(self, target):
         """Expected L0 norm under the stochastic gates, takes into account and re-weights also a potential L2 penalty"""
         # logpw_col = torch.sum(- (.5 * self.prior_prec * self.activations.pow(2)) - self.lamba, 1)
         # don't want to be summing over any dimension, cf linear or conv layer version
         logpw_col = - (.5 * self.prior_prec * self.activations.pow(2)) - self.lamba
         logpw = ((1 - self.cdf_qz(0)) * logpw_col).sum(1)
 
-        logpw = logpw.mean() #- logpw.std()
+        logpw = (logpw - target).pow(2).mean()
         # print(logpw.shape)
         # logic behind max: slower to converge but don't get beggar-thy-neighbour effect
         #uses min because these all negative!!!
@@ -98,7 +98,7 @@ class L0Activation(Module):
         # print(logpw)  
         return logpw + logpb
 
-    def regularization(self):
+    def regularization(self, target=0):
         return self._reg_w()
 
     def count_expected_flops_and_l0(self):
