@@ -81,7 +81,7 @@ class L0Activation(Module):
         logpw_col = - (.5 * self.prior_prec * self.activations.pow(2)) - self.lamba
         logpw = ((1 - self.cdf_qz(0)) * logpw_col).sum(1)
 
-        logpw = (logpw - target).pow(2).mean()
+        logpw = (logpw + target).pow(2).mean()
         # print(logpw.shape)
         # logic behind max: slower to converge but don't get beggar-thy-neighbour effect
         #uses min because these all negative!!!
@@ -96,7 +96,7 @@ class L0Activation(Module):
 
         logpb = 0 if not self.use_bias else - torch.sum(.5 * self.prior_prec * self.bias.pow(2))
         # print(logpw)  
-        return logpw + logpb
+        return logpw + logpb    
 
     def regularization(self, target=0):
         return self._reg_w(target)
