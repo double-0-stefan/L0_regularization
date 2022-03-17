@@ -210,7 +210,7 @@ class L0Conv2d(Module):
         self.floatTensor = torch.FloatTensor if device.type == 'cpu'  else torch.cuda.FloatTensor
         self.use_bias = False
         self.weights = Parameter(torch.Tensor(out_channels, in_channels // groups, *self.kernel_size))
-        self.qz_loga = Parameter(torch.Tensor(out_channels))
+        self.qz_loga = Parameter(torch.Tensor(out_channels, in_channels // groups, *self.kernel_size))
         self.dim_z = out_channels
         self.input_shape = None
         self.local_rep = local_rep
