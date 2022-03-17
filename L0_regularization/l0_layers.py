@@ -11,6 +11,10 @@ from torch.nn import init
 limit_a, limit_b, epsilon = -.1, 1.1, 1e-6
 
 
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+device = torch.device("cpu")
+
+
 
 class L0Activation(Module):
     """Implementation of L0 regularization for the input units of a fully connected layer"""
@@ -37,8 +41,8 @@ class L0Activation(Module):
 
         self.prior_prec = weight_decay
 
-        self.activations = torch.Tensor(in_features).cuda() # was weights
-        self.qz_loga = torch.Tensor(in_features).cuda()
+        self.activations = torch.Tensor(in_features).to(device) # was weights
+        self.qz_loga = torch.Tensor(in_features).to(device)
         
         self.temperature = temperature
         self.droprate_init = droprate_init if droprate_init != 0. else 0.5
@@ -48,7 +52,7 @@ class L0Activation(Module):
         # if bias:
         #     self.bias = Parameter(torch.Tensor(out_features))
         #     self.use_bias = True
-        self.floatTensor = torch.FloatTensor if not torch.cuda.is_available() else torch.cuda.FloatTensor
+        self.floatTensor = torch.FloatTensor if device.type == 'cpu' else torch.cuda.FloatTensor
         self.reset_parameters()
         print(self)
 
@@ -205,7 +209,7 @@ class L0Conv2d(Module):
         self.lamba = lamba
         self.droprate_init = droprate_init if droprate_init != 0. else 0.5
         self.temperature = temperature
-        self.floatTensor = torch.FloatTensor if not torch.cuda.is_available() else torch.cuda.FloatTensor
+        self.floatTensor = torch.FloatTensor if device.type == 'cpu'  else torch.cuda.FloatTensor
         self.use_bias = False
         self.weights = Parameter(torch.Tensor(out_channels, in_channels // groups, *self.kernel_size))
         self.qz_loga = Parameter(torch.Tensor(out_channels))
@@ -367,7 +371,7 @@ class L0Dense(Module):
         if bias:
             self.bias = Parameter(torch.Tensor(out_features))
             self.use_bias = True
-        self.floatTensor = torch.FloatTensor if not torch.cuda.is_available() else torch.cuda.FloatTensor
+        self.floatTensor = torch.FloatTensor if device.type == 'cpu'  else torch.cuda.FloatTensor
         self.reset_parameters()
         print(self)
 
