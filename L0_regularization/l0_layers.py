@@ -53,7 +53,7 @@ class L0Activation(Module):
         print(self)
 
     def reset_parameters(self):
-        init.kaiming_normal(self.activations)
+        init.kaiming_normal_(self.activations)
 
         init.normal_(self.qz_loga, math.log(1 - self.droprate_init) - math.log(self.droprate_init), 1e-2)
 
@@ -221,7 +221,7 @@ class L0Conv2d(Module):
         print(self)
 
     def reset_parameters(self):
-        init.kaiming_normal(self.weights, mode='fan_in')
+        init.kaiming_normal_(self.weights, mode='fan_in')
 
         self.qz_loga.data.normal_(math.log(1 - self.droprate_init) - math.log(self.droprate_init), 1e-2)
 
