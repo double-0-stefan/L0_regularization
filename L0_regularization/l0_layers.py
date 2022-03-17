@@ -83,7 +83,7 @@ class L0Activation(Module):
         # don't want to be summing over any dimension, cf linear or conv layer version
         logpw_col = - (.5 * self.prior_prec * self.activations.pow(2)) - self.lamba
         logpw = ((1 - self.cdf_qz(0)) * logpw_col)
-        
+
         if dim_sum is not None:
             logpw = logpw.sum(dim_sum)
 
@@ -105,7 +105,7 @@ class L0Activation(Module):
         return logpw + logpb    
 
     def regularization(self, target=0, dim_sum=1):
-        return self._reg_w(target)
+        return self._reg_w(target, dim_sum)
 
     def count_expected_flops_and_l0(self):
         """Measures the expected floating point operations (FLOPs) and the expected L0 norm"""
