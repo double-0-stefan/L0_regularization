@@ -301,8 +301,10 @@ class L0Conv2d(Module):
         else:
             c = F.conv2d
 
-        self.weights = nn.Parameter(input_weights) if input_weights is not None
-        self.qz_loga = nn.Parameter(input_qz_loga) if input_qz_loga is not None
+        if input_weights is not None:
+            self.weights = nn.Parameter(input_weights)
+        if input_qz_loga is not None:
+            self.qz_loga = nn.Parameter(input_qz_loga) 
 
         if self.input_shape is None:
             self.input_shape = input_.size()
