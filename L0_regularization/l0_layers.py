@@ -12,8 +12,6 @@ limit_a, limit_b, epsilon = -.1, 1.1, 1e-6
 
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-device = torch.device("cpu")
-
 
 
 class L0Activation(Module):
