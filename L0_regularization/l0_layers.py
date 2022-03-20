@@ -104,8 +104,8 @@ class L0Activation(Module):
         # print(logpw)  
         return logpw + logpb    
 
-    def regularization(self, target=0, dim_sum=1):
-        return self._reg_w(target, dim_sum)
+    def regularization(self, target=0, dim_sum=1, mult=1.):
+        return mult * self._reg_w(target, dim_sum)
 
     def count_expected_flops_and_l0(self):
         """Measures the expected floating point operations (FLOPs) and the expected L0 norm"""
