@@ -91,13 +91,14 @@ class L0Activation(Module):
         if dim_sum is not None:
             logpw = logpw.sum(dim_sum)
 
-        logpw = (logpw + target).pow(2).mean()
+        # logpw = (logpw + target).pow(2).mean() # could use sum here instead?
+        logpw = (logpw + target).pow(2).sum()
         logpb = 0 if not self.use_bias else - torch.sum(.5 * self.prior_prec * self.bias.pow(2))
 
         return logpw + logpb    
 
-    def regularization(self, target=0, dim_sum=1, mult=1.):
-        return mult * self._reg_w(target, dim_sum)
+    def regularization(self, target=0, dim_sum=1):
+        return self._reg_w(target, dim_sum)
 
     def count_expected_flops_and_l0(self):
         """Measures the expected floating point operations (FLOPs) and the expected L0 norm"""
