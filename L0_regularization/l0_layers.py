@@ -91,8 +91,8 @@ class L0Activation(Module):
         if dim_sum is not None:
             logpw = logpw.sum(dim_sum)
 
-        # logpw = (logpw + target).pow(2).mean() # could use sum here instead?
-        logpw = (logpw + target).pow(2).sum()
+        logpw = (logpw + target).pow(2).mean() # sum doesn't work with ME, wierdly
+        # logpw = (logpw + target).pow(2).sum()
         logpb = 0 if not self.use_bias else - torch.sum(.5 * self.prior_prec * self.bias.pow(2))
 
         return logpw + logpb    
