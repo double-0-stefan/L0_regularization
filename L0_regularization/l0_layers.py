@@ -39,8 +39,8 @@ class L0Activation(Module):
 
         self.prior_prec = weight_decay
 
-        self.activations = torch.Tensor(in_features).to(device) # was weights
-        self.qz_loga = torch.Tensor(in_features).to(device)
+        self.activations = nn.Parameter(torch.Tensor(in_features))#.to(device) # was weights
+        self.qz_loga = nn.Parameter(torch.Tensor(in_features))#.to(device)
         
         self.temperature = temperature
         self.droprate_init = droprate_init if droprate_init != 0. else 0.5
@@ -88,20 +88,8 @@ class L0Activation(Module):
             logpw = logpw.sum(dim_sum)
 
         logpw = (logpw + target).pow(2).mean()
-        # print(logpw.shape)
-        # logic behind max: slower to converge but don't get beggar-thy-neighbour effect
-        #uses min because these all negative!!!
-
-        # logpw = torch.amin(logpw, dim=[0,1,-1])
-        # 'soft' version:
-        # m = logpw.mean()
-        # logpw = logpw[logpw <= m].sum()
-
-
-        # logpw = logpw.max()
-
         logpb = 0 if not self.use_bias else - torch.sum(.5 * self.prior_prec * self.bias.pow(2))
-        # print(logpw)  
+
         return logpw + logpb    
 
     def regularization(self, target=0, dim_sum=1, mult=1.):
