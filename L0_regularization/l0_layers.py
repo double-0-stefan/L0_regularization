@@ -18,8 +18,8 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 class L0Activation(Module):
     """Implementation of L0 regularization for the input units of a fully connected layer"""
     def __init__(self, in_features, out_features=False, bias=False, weight_decay=0., 
-                 droprate_init=0.5, temperature=2./3.,
-                 lamba=1., local_rep=False, as_parameters=True, **kwargs):
+                 droprate_init=0.5, temperature=2./3., lamba=1., local_rep=False, 
+                    as_parameters=False, strictly_positive=True **kwargs):
         """
         :param in_features: Input dimensionality
         :param out_features: Output dimensionality - NA
@@ -34,7 +34,7 @@ class L0Activation(Module):
 
         # if len(in_features) > 1:
         #     in_features = in_features[0]*in_features[1]*in_features[2]*in_features[3]
-
+        self.strictly_positive = strictly_positive
         self.in_features = in_features
         self.out_features = out_features
 
@@ -140,11 +140,14 @@ class L0Activation(Module):
             # in case need to pass activations as parameter (eg when using torchmin)
             self.activations = input_activations
 
-        if input_qz_loga is not None:   
+        if input_qz_loga is not None:  
             # in case need to pass activations as parameter (eg when using torchmin)
             self.qz_loga = input_qz_loga
 
         output_activations = self.sample_z(sample=self.training) * self.activations
+
+        if self.strictly_positive:
+            output_activations = output_activations.exp()
 
         if shape is not None:
             output_activations.reshape(shape)
