@@ -63,12 +63,16 @@ class L0Activation(Module):
 
         init.normal_(self.qz_loga, math.log(1 - self.droprate_init) - math.log(self.droprate_init), 1e-2)
 
+        self.constrain_parameters()
+
         if self.use_bias:
             self.bias.data.fill_(0)
 
 
     def constrain_parameters(self, **kwargs):
         self.qz_loga.data.clamp_(min=math.log(1e-2), max=math.log(1e2))
+        if self.strictly_positive:
+            self.activations.data.clamp_(min=0)
 
     def cdf_qz(self, x):
         """Implements the CDF of the 'stretched' concrete distribution"""
@@ -146,8 +150,6 @@ class L0Activation(Module):
 
         output_activations = self.sample_z(sample=self.training) * self.activations
 
-        if self.strictly_positive:
-            output_activations = output_activations.exp()
 
         if shape is not None:
             output_activations.reshape(shape)
