@@ -59,7 +59,8 @@ class L0Activation(Module):
         print(self)
 
     def reset_parameters(self):
-        init.kaiming_normal_(self.activations)
+        # init.kaiming_normal_(self.activations)    
+        init.normal_(self.activations, mean=1, std=1)
 
         init.normal_(self.qz_loga, math.log(1 - self.droprate_init) - math.log(self.droprate_init), 1e-2)
 
