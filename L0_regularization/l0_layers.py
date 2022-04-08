@@ -94,14 +94,15 @@ class L0Activation(Module):
         logpw = ((1 - self.cdf_qz(0)) * logpw_col)
 
         
-        # sum over a dimension when want to penalise more heavily, otherwise mean
+        # sum first over a dimension when want to penalise more heavily
         if dim_sum == 2:
             ls = logpw.shape
             logpw = logpw.reshape(ls[0], scales, ls[1]//scales, ls[-2], ls[-1])
-        logpw = (logpw + target).pow(2).sum(dim_sum).mean()
+        logpw = (logpw + target).sum(dim_sum).pow(2).sum()
+        # ie
+        # 2**2 + 2**2 = 8
+        # (2+2)**2    = 16
 
-
-        # logpw = (logpw + target).pow(2).sum()
         logpb = 0 if not self.use_bias else - torch.sum(.5 * self.prior_prec * self.bias.pow(2))
 
         return logpw + logpb
