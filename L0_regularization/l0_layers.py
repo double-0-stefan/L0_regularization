@@ -86,7 +86,7 @@ class L0Activation(Module):
         y = sigmoid((torch.log(x) - torch.log(1 - x) + self.qz_loga) / self.temperature)
         return y * (limit_b - limit_a) + limit_a
 
-    def _reg_w(self, target, dim_sum=None):
+    def _reg_w(self, target, dim_sum=None, scales=4):
         """Expected L0 norm under the stochastic gates, takes into account and re-weights also a potential L2 penalty"""
         # logpw_col = torch.sum(- (.5 * self.prior_prec * self.activations.pow(2)) - self.lamba, 1)
         # don't want to be summing over any dimension, cf linear or conv layer version
@@ -95,8 +95,10 @@ class L0Activation(Module):
 
         
         # sum over a dimension when want to penalise more heavily, otherwise mean
-        logpw = (logpw + target).pow(2)
-        logpw = logpw.sum(dim_sum).mean()
+        if dim_sum == 2:
+            ls = logpw.shape
+            logpw = logpw.reshape(ls[0], scales, ls[1]//scales, ls[-2], ls[-1])
+        logpw = (logpw + target).pow(2).sum(dim_sum).mean()
 
 
         # logpw = (logpw + target).pow(2).sum()
@@ -104,8 +106,8 @@ class L0Activation(Module):
 
         return logpw + logpb
 
-    def regularization(self, target=0, dim_sum=None):
-        return self._reg_w(target, dim_sum)
+    def regularization(self, target=0, dim_sum=None, scales=4):
+        return self._reg_w(target, dim_sum, scales)
 
     def count_expected_flops_and_l0(self):
         """Measures the expected floating point operations (FLOPs) and the expected L0 norm"""
