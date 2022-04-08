@@ -93,14 +93,16 @@ class L0Activation(Module):
         logpw_col = - (.5 * self.prior_prec * self.activations.pow(2)) - self.lamba
         logpw = ((1 - self.cdf_qz(0)) * logpw_col)
 
-        if dim_sum is not None:
-            logpw = logpw.sum(dim_sum)
+        
+        # sum over a dimension when want to penalise more heavily, otherwise mean
+        logpw = (logpw + target).pow(2)
+        logpw = logpw.sum(dim_sum).mean()
 
-        logpw = (logpw + target).pow(2)# .mean()remove mean to enable fine-tuning of scale etc
+
         # logpw = (logpw + target).pow(2).sum()
         logpb = 0 if not self.use_bias else - torch.sum(.5 * self.prior_prec * self.bias.pow(2))
 
-        return logpw + logpb    
+        return logpw + logpb
 
     def regularization(self, target=0, dim_sum=None):
         return self._reg_w(target, dim_sum)
