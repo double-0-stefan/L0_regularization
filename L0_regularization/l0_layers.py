@@ -102,7 +102,7 @@ class L0Activation(Module):
 
         return logpw + logpb    
 
-    def regularization(self, target=0, dim_sum=1):
+    def regularization(self, target=0, dim_sum=None):
         return self._reg_w(target, dim_sum)
 
     def count_expected_flops_and_l0(self):
