@@ -98,10 +98,10 @@ class L0Activation(Module):
         if dim_sum == 2:
             ls = logpw.shape
             logpw = logpw.reshape(ls[0], scales, ls[1]//scales, ls[-2], ls[-1])
-        logpw = (logpw + target).sum(dim_sum).pow(2).sum()
+        logpw = (logpw + target).sum(dim_sum).pow(2).mean()#.sum(s)
         # ie
-        # 2**2 + 2**2 = 8
-        # (2+2)**2    = 16
+        # 2**2 + 2**2 = 8   or mean=4
+        # (2+2)**2    = 16  or mean=16
 
         logpb = 0 if not self.use_bias else - torch.sum(.5 * self.prior_prec * self.bias.pow(2))
 
