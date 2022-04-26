@@ -160,7 +160,7 @@ class L0Activation(Module):
         if shape is not None:
             output_activations.reshape(shape)
 
-        return output_activations.pow(2).pow(1/2)
+        return output_activations#.pow(2).pow(1/2)
 
 
 
