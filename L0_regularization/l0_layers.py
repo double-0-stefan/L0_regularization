@@ -33,7 +33,6 @@ class L0Activation(Module):
 
         # if len(in_features) > 1:
         #     in_features = in_features[0]*in_features[1]*in_features[2]*in_features[3]
-        self.strictly_positive = strictly_positive
         self.in_features = in_features
         self.out_features = out_features
 
