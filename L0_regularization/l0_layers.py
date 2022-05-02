@@ -19,7 +19,7 @@ class L0Activation(Module):
     """Implementation of L0 regularization for the input units of a fully connected layer"""
     def __init__(self, in_features, out_features=False, bias=False, weight_decay=0., 
                  droprate_init=0.5, temperature=2./3., lamba=1., local_rep=False, 
-                    as_parameters=False, strictly_positive=True, **kwargs):
+                    a**kwargs):
         """
         :param in_features: Input dimensionality
         :param out_features: Output dimensionality - NA
@@ -39,12 +39,8 @@ class L0Activation(Module):
         self.out_features = out_features
 
         self.prior_prec = weight_decay
-        if as_parameters:
-            self.activations = nn.Parameter(torch.Tensor(in_features))#.to(device)
-            self.qz_loga = nn.Parameter(torch.Tensor(in_features))#.to(device)
-        else:
-            self.activations = torch.Tensor(in_features).to(device)
-            self.qz_loga = torch.Tensor(in_features).to(device)
+        self.activations = torch.rand(in_features).to(device)
+        self.qz_loga = torch.rand(in_features).to(device)
 
         self.temperature = temperature
         self.droprate_init = droprate_init if droprate_init != 0. else 0.5
