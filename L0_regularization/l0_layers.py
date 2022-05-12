@@ -89,17 +89,17 @@ class L0Activation(Module):
 
         
         # sum first over a dimension when want to penalise more heavily
-        if scales is not None:
-            ls = logpw.shape
-            logpw = logpw.reshape(ls[0], scales, ls[1]//scales, ls[-2], ls[-1])
-        logpw = (logpw + target).sum(dim_sum).pow(2).mean()#.sum(s)
+        # if scales is not None:
+        #     ls = logpw.shape
+        #     logpw = logpw.reshape(ls[0], scales, ls[1]//scales, ls[-2], ls[-1])
+        # logpw = (logpw + target).sum(dim_sum).pow(2).mean()#.sum(s)
         # ie
         # 2**2 + 2**2 = 8   or mean=4
         # (2+2)**2    = 16  or mean=16
 
-        logpb = 0 if not self.use_bias else - torch.sum(.5 * self.prior_prec * self.bias.pow(2))
+        # logpb = 0 if not self.use_bias else - torch.sum(.5 * self.prior_prec * self.bias.pow(2))
 
-        return logpw + logpb
+        return logpw #+ logpb
 
     def regularization(self, target=0, dim_sum=None, scales=None):
         return self._reg_w(target, dim_sum, scales)
