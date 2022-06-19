@@ -88,14 +88,8 @@ class L0Activation(Module):
         logpw = ((1 - self.cdf_qz(0)) * logpw_col)
 
         
-        # sum first over a dimension when want to penalise more heavily
-        # if scales is not None:
-        #     ls = logpw.shape
-        #     logpw = logpw.reshape(ls[0], scales, ls[1]//scales, ls[-2], ls[-1])
         # logpw = (logpw + target).sum(dim_sum).pow(2).mean()#.sum(s)
-        # ie
-        # 2**2 + 2**2 = 8   or mean=4
-        # (2+2)**2    = 16  or mean=16
+     
 
         # logpb = 0 if not self.use_bias else - torch.sum(.5 * self.prior_prec * self.bias.pow(2))
 
@@ -148,7 +142,7 @@ class L0Activation(Module):
             # in case need to pass activations as parameter (eg when using torchmin)
             self.qz_loga = input_qz_loga
 
-        output_activations = self.sample_z(sample=self.training) * self.activations
+        output_activations = self.sample_z(sample=self.training) * self.activations.exp()
 
 
         if shape is not None:
