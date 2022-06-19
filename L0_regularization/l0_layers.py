@@ -142,7 +142,7 @@ class L0Activation(Module):
             # in case need to pass activations as parameter (eg when using torchmin)
             self.qz_loga = input_qz_loga
 
-        output_activations = self.sample_z(sample=self.training) * self.activations.exp()
+        output_activations = self.sample_z(sample=self.training) * self.activations
 
 
         if shape is not None:
