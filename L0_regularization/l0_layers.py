@@ -50,11 +50,12 @@ class L0Activation(Module):
         #     self.use_bias = True
         self.floatTensor = torch.FloatTensor if device.type == 'cpu' else torch.cuda.FloatTensor
         self.reset_parameters()
+        self.autocast = False
         print(self)
 
     def reset_parameters(self):
         # init.kaiming_normal_(self.activations)    
-        init.normal_(self.activations, mean=1, std=1)
+        init.normal_(self.activations, mean=0, std=1)
 
         init.normal_(self.qz_loga, math.log(1 - self.droprate_init) - math.log(self.droprate_init), 1e-2)
 
@@ -133,6 +134,9 @@ class L0Activation(Module):
 
 
     def forward(self, input_activations=None, input_qz_loga=None, shape=None):
+
+        if self.autocast:
+            self.floatTensor = torch.HalfTensor if device.type == 'cpu' else torch.cuda.HalfTensor
 
         if input_activations is not None:
             # in case need to pass activations as parameter (eg when using torchmin)
