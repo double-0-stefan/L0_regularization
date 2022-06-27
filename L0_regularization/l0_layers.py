@@ -19,7 +19,7 @@ class L0Activation(Module):
     """Implementation of L0 regularization for the input units of a fully connected layer"""
     def __init__(self, in_features, out_features=False, bias=False, weight_decay=0., 
                  droprate_init=0.5, temperature=2./3., lamba=1., local_rep=False,
-                 low_precision=False **kwargs):
+                 low_precision=False, **kwargs):
         """
         :param in_features: Input dimensionality
         :param out_features: Output dimensionality - NA
