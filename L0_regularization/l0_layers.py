@@ -50,7 +50,7 @@ class L0Activation(Module):
         #     self.bias = Parameter(torch.Tensor(out_features))
         #     self.use_bias = True
         if low_precision:
-            self.floatTensor = torch.HalfTensor if device.type == 'cpu' else torch.cuda.HalfTensor
+            self.floatTensor = torch.BFloat16Tensor if device.type == 'cpu' else torch.cuda.BFloat16Tensor
         else:   
             self.floatTensor = torch.FloatTensor if device.type == 'cpu' else torch.cuda.FloatTensor
         
