@@ -18,7 +18,8 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 class L0Activation(Module):
     """Implementation of L0 regularization for the input units of a fully connected layer"""
     def __init__(self, in_features, out_features=False, bias=False, weight_decay=0., 
-                 droprate_init=0.5, temperature=2./3., lamba=1., local_rep=False, **kwargs):
+                 droprate_init=0.5, temperature=2./3., lamba=1., local_rep=False,
+                 low_precision=False **kwargs):
         """
         :param in_features: Input dimensionality
         :param out_features: Output dimensionality - NA
@@ -45,10 +46,14 @@ class L0Activation(Module):
         self.lamba = lamba
         self.use_bias = False
         self.local_rep = local_rep
+        self.low_precision = low_precision
         # if bias:
         #     self.bias = Parameter(torch.Tensor(out_features))
         #     self.use_bias = True
-        self.floatTensor = torch.FloatTensor if device.type == 'cpu' else torch.cuda.FloatTensor
+        if low_precision:
+            self.floatTensor = torch.HalfTensor if device.type == 'cpu' else torch.cuda.HalfTensor
+        else:   
+            self.floatTensor = torch.FloatTensor if device.type == 'cpu' else torch.cuda.FloatTensor
         self.reset_parameters()
         self.autocast = False
         print(self)
