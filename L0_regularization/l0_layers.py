@@ -38,8 +38,8 @@ class L0Activation(Module):
         self.out_features = out_features
 
         self.prior_prec = weight_decay
-        self.activations = self.floatTensor(torch.rand(in_features)).to(device)
-        self.qz_loga = self.floatTensor(torch.rand(in_features)).to(device)
+        self.activations = self.floatTensor(in_features).uniform_().to(device)#torch.rand(in_features)).to(device)
+        self.qz_loga = self.floatTensor(in_features).uniform_().to(device)#self.floatTensor(torch.rand(in_features)).to(device)
 
         self.temperature = temperature
         self.droprate_init = droprate_init if droprate_init != 0. else 0.5
