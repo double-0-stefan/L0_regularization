@@ -53,10 +53,11 @@ class L0Activation(Module):
             self.floatTensor = torch.HalfTensor if device.type == 'cpu' else torch.cuda.HalfTensor
         else:   
             self.floatTensor = torch.FloatTensor if device.type == 'cpu' else torch.cuda.FloatTensor
-        self.reset_parameters()
+        
         self.autocast = False
         self.activations = self.floatTensor(in_features).uniform_().to(device)#torch.rand(in_features)).to(device) 
         self.qz_loga = self.floatTensor(in_features).uniform_().to(device)#self.floatTensor(torch.rand(in_features)).to(device)
+        self.reset_parameters()
         print(self)
 
     def reset_parameters(self):
