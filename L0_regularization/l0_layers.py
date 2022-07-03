@@ -57,7 +57,7 @@ class L0Activation(Module):
         self.autocast = False
         self.activations = self.floatTensor(in_features).uniform_().to(device)#torch.rand(in_features)).to(device) 
         self.qz_loga = self.floatTensor(in_features).uniform_().to(device)#self.floatTensor(torch.rand(in_features)).to(device)
-        if as_parameters = True:
+        if as_parameters:
             self.activations = Parameter(self.activations)
             self.qz_loga = Parameter(self.qz_loga)
 
