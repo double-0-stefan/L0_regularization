@@ -19,7 +19,7 @@ class L0Activation(Module):
     """Implementation of L0 regularization for the input units of a fully connected layer"""
     def __init__(self, in_features, out_features=False, bias=False, weight_decay=0., 
                  droprate_init=0.5, temperature=2./3., lamba=1., local_rep=False,
-                 low_precision=False, **kwargs):
+                 low_precision=False, as_parameters=False **kwargs):
         """
         :param in_features: Input dimensionality
         :param out_features: Output dimensionality - NA
@@ -50,13 +50,17 @@ class L0Activation(Module):
         #     self.bias = Parameter(torch.Tensor(out_features))
         #     self.use_bias = True
         if low_precision:
-            self.floatTensor = torch.BFloat16Tensor if device.type == 'cpu' else torch.cuda.BFloat16Tensor
+            self.floatTensor = torch.HalfTensor if device.type == 'cpu' else torch.cuda.BFloat16Tensor
         else:   
             self.floatTensor = torch.FloatTensor if device.type == 'cpu' else torch.cuda.FloatTensor
         
         self.autocast = False
         self.activations = self.floatTensor(in_features).uniform_().to(device)#torch.rand(in_features)).to(device) 
         self.qz_loga = self.floatTensor(in_features).uniform_().to(device)#self.floatTensor(torch.rand(in_features)).to(device)
+        if as_parameters = True:
+            self.activations = Parameter(self.activations)
+            self.qz_loga = Parameter(self.qz_loga)
+
         self.reset_parameters()
         print(self)
 
