@@ -327,7 +327,8 @@ class L0Conv2d(Module):
             return output.mul(z)
         else:
             weights = self.sample_weights()
-            output = c(input_, weights, stride=self.stride, padding=self.padding, dilation=self.dilation, groups=self.groups)
+            output = c(input_, weights, stride=self.stride, padding=self.padding, dilation=self.dilation, groups=self.groups, 
+                output_padding=0)
             return output
 
 
