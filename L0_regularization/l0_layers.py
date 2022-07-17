@@ -257,7 +257,7 @@ class L0Conv2d(Module):
     def _reg_w(self):
         """Expected L0 norm under the stochastic gates, takes into account and re-weights also a potential L2 penalty"""
         q0 = self.cdf_qz(0)
-        logpw_col = torch.sum(- (.5 * self.prior_prec * self.weights.pow(2)) - self.lamba, 3).sum(2).sum(1)
+        logpw_col = - (.5 * self.prior_prec * self.weights) - self.lamba
         logpw = (1 - q0) * logpw_col
         logpb = 0 if not self.use_bias else - torch.sum((1 - q0) * (.5 * self.prior_prec * self.bias.pow(2) -
                                                                     self.lamba))
