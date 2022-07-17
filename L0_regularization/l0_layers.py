@@ -322,7 +322,7 @@ class L0Conv2d(Module):
             self.input_shape = input_.size()
         b = None if not self.use_bias else self.bias
         if self.local_rep or not self.training:
-            output = c(input_, self.weights, b, self.stride, self.padding, self.dilation, self.groups)
+            output = c(input_, self.weights, b, self.stride, self.padding, self.dilation, self.groups, output_padding=0)
             z = self.sample_z(output.size(0), sample=self.training)
             return output.mul(z)
         else:
