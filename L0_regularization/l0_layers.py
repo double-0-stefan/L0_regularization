@@ -295,15 +295,15 @@ class L0Conv2d(Module):
     def sample_z(self, batch_size, sample=True):
         """Sample the hard-concrete gates for training and use a deterministic value for testing"""
         if sample:
-            eps = self.get_eps(self.floatTensor(batch_size, self.dim_z))
-            z = self.quantile_concrete(eps).view(batch_size, self.dim_z, 1, 1)
+            eps = self.get_eps(self.floatTensor(self.in_channels, self.dim_z, *self.kernel_size))
+            z = self.quantile_concrete(eps)#.view(batch_size, self.dim_z, 1, 1)
             return F.hardtanh(z, min_val=0, max_val=1)
         else:  # mode
             pi = sigmoid(self.qz_loga).view(1, self.dim_z, 1, 1)
             return F.hardtanh(pi * (limit_b - limit_a) + limit_a, min_val=0, max_val=1)
 
     def sample_weights(self):
-        z = self.quantile_concrete(self.get_eps(self.floatTensor(self.dim_z))).view(self.dim_z, 1, 1, 1)
+        z = self.quantile_concrete(self.get_eps(self.floatTensor(self.dim_z)))#.view(self.dim_z, 1, 1, 1)
         return F.hardtanh(z, min_val=0, max_val=1) * self.weights
 
     def forward(self, input_, input_weights=None, input_qz_loga=None):
